@@ -28,9 +28,14 @@ def is_staff(ctx_or_interaction: Union[commands.Context, discord.Interaction]) -
     
     if not guild:
         return False
-        
+    
     # Get the staff role ID from the bot instance
-    bot = ctx_or_interaction.bot
+    if isinstance(ctx_or_interaction, commands.Context):
+        bot = ctx_or_interaction.bot
+    else:
+        # For Interactions, get the bot from the client property
+        bot = ctx_or_interaction.client
+    
     staff_role_id = getattr(bot, 'staff_role_id', None)
     
     if not staff_role_id:

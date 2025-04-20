@@ -8,6 +8,7 @@ from discord.ext import commands
 import logging
 import asyncio
 import datetime
+from typing import Optional
 
 from utils.embeds import create_error_embed, create_success_embed, create_vouch_embed
 from utils.permissions import is_staff
