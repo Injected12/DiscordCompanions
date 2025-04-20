@@ -27,13 +27,23 @@ class Database:
         """
         Get database connection parameters from environment variables
         """
-        return {
-            'dbname': os.getenv('PGDATABASE', 'discord_bot'),
-            'user': os.getenv('PGUSER', 'postgres'),
-            'password': os.getenv('PGPASSWORD', ''),
-            'host': os.getenv('PGHOST', 'localhost'),
-            'port': os.getenv('PGPORT', '5432')
-        }
+        # Check if we have a full DATABASE_URL (common in cloud environments)
+        database_url = os.getenv('DATABASE_URL')
+        if database_url:
+            # For Neon.tech and similar cloud PostgreSQL providers that use SSL
+            return {
+                'dsn': database_url,
+                'sslmode': 'require'
+            }
+        else:
+            # Fallback to individual parameters for local development
+            return {
+                'dbname': os.getenv('PGDATABASE', 'discord_bot'),
+                'user': os.getenv('PGUSER', 'postgres'),
+                'password': os.getenv('PGPASSWORD', ''),
+                'host': os.getenv('PGHOST', 'localhost'),
+                'port': os.getenv('PGPORT', '5432')
+            }
 
     def _connect(self):
         """

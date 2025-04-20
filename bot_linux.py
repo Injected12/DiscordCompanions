@@ -44,10 +44,31 @@ class D10Bot(commands.Bot):
         
         # Store IDs from environment variables
         self.server_id = int(os.getenv('DISCORD_SERVER_ID', 0))
-        self.staff_role_id = int(os.getenv('DISCORD_STAFF_ROLE_ID', 0))
-        self.status_role_id = int(os.getenv('DISCORD_STATUS_ROLE_ID', 0))
-        self.vouch_role_id = int(os.getenv('DISCORD_VOUCH_ROLE_ID', 0))
-        self.vouch_channel_id = int(os.getenv('DISCORD_VOUCH_CHANNEL_ID', 0))
+        
+        # Handle role IDs safely, using 0 as default if not set or invalid
+        try:
+            self.staff_role_id = int(os.getenv('DISCORD_STAFF_ROLE_ID', 0))
+        except (ValueError, TypeError):
+            self.staff_role_id = 0
+            logger.warning("DISCORD_STAFF_ROLE_ID not set or invalid, using 0")
+            
+        try:
+            self.status_role_id = int(os.getenv('DISCORD_STATUS_ROLE_ID', 0))
+        except (ValueError, TypeError):
+            self.status_role_id = 0
+            logger.warning("DISCORD_STATUS_ROLE_ID not set or invalid, using 0")
+            
+        try:
+            self.vouch_role_id = int(os.getenv('DISCORD_VOUCH_ROLE_ID', 0))
+        except (ValueError, TypeError):
+            self.vouch_role_id = 0
+            logger.warning("DISCORD_VOUCH_ROLE_ID not set or invalid, using 0")
+            
+        try:
+            self.vouch_channel_id = int(os.getenv('DISCORD_VOUCH_CHANNEL_ID', 0))
+        except (ValueError, TypeError):
+            self.vouch_channel_id = 0
+            logger.warning("DISCORD_VOUCH_CHANNEL_ID not set or invalid, using 0")
         
         # Initialize database
         self.db = Database()
