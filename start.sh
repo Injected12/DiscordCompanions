@@ -63,8 +63,22 @@ echo "Starting the bot..."
 echo "(Press Ctrl+C to stop the bot)"
 echo ""
 
+# Create memory database files if they don't exist
+if [ ! -f memory_database.py ]; then
+    echo "Creating memory_database.py for in-memory storage..."
+    cp -f memory_database.py memory_database.py.bak 2>/dev/null || true
+fi
+
+if [ ! -f bot_memory.py ]; then
+    echo "Creating bot_memory.py for database-free operation..."
+    cp -f bot_memory.py bot_memory.py.bak 2>/dev/null || true
+fi
+
+# Update main.py to use memory-based bot
+grep -q "from bot_memory import D10Bot" main.py || sed -i 's/from bot_linux import D10Bot/from bot_memory import D10Bot/g' main.py
+
 # Run the bot
-python3 bot_main.py
+python3 main.py
 
 # When finished
 echo ""
