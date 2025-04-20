@@ -11,12 +11,8 @@ import signal
 from flask import Flask, jsonify, render_template_string
 from dotenv import load_dotenv
 
-# Determine which bot class to import based on platform
-if sys.platform.startswith('win'):
-    from bot import D10Bot
-else:
-    # For Linux environments, use the Linux-optimized bot
-    from bot_linux import D10Bot
+# Use memory-based bot to avoid database connection issues
+from bot_memory import D10Bot
 
 # Load environment variables
 load_dotenv()
