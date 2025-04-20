@@ -276,28 +276,33 @@ class Database:
         try:
             self._connect()
             
+            # Create a copy to avoid modifying the original
+            processed_data = data.copy()
+            
             # Ensure we have an ID
-            if 'id' not in data:
-                data['id'] = str(uuid.uuid4())
+            if 'id' not in processed_data:
+                processed_data['id'] = str(uuid.uuid4())
             
-            # Convert timestamp fields
-            for key, value in list(data.items()):
+            # Process each field properly for PostgreSQL
+            for key, value in list(processed_data.items()):
+                # Convert datetime objects
                 if isinstance(value, datetime.datetime):
-                    data[key] = value
+                    processed_data[key] = value
+                # Convert timestamp integers/floats to datetime
                 elif key.endswith('_at') and isinstance(value, (int, float)):
-                    data[key] = datetime.datetime.fromtimestamp(value)
-            
-            # Extract JSON fields
-            json_fields = ['data', 'value', 'winner_ids', 'participants']
-            for field in json_fields:
-                if field in data and (isinstance(data[field], (dict, list))):
-                    data[field] = json.dumps(data[field])
+                    processed_data[key] = datetime.datetime.fromtimestamp(value)
+                # Convert any dictionaries to JSON strings
+                elif isinstance(value, (dict, list)):
+                    processed_data[key] = json.dumps(value)
+                # Handle None values explicitly (already handled by psycopg2)
+                elif value is None:
+                    processed_data[key] = None
             
             with self.conn.cursor() as cur:
                 # Build the query
-                columns = list(data.keys())
+                columns = list(processed_data.keys())
                 placeholders = ["%s"] * len(columns)
-                values = [data[col] for col in columns]
+                values = [processed_data[col] for col in columns]
                 
                 sql = f"INSERT INTO {collection} ({', '.join(columns)}) VALUES ({', '.join(placeholders)}) RETURNING id"
                 cur.execute(sql, values)
@@ -317,23 +322,28 @@ class Database:
         try:
             self._connect()
             
-            # Convert timestamp fields
-            for key, value in list(data.items()):
-                if isinstance(value, datetime.datetime):
-                    data[key] = value
-                elif key.endswith('_at') and isinstance(value, (int, float)):
-                    data[key] = datetime.datetime.fromtimestamp(value)
+            # Create a copy to avoid modifying the original
+            processed_data = data.copy()
             
-            # Extract JSON fields
-            json_fields = ['data', 'value', 'winner_ids', 'participants']
-            for field in json_fields:
-                if field in data and (isinstance(data[field], (dict, list))):
-                    data[field] = json.dumps(data[field])
+            # Process each field properly for PostgreSQL
+            for key, value in list(processed_data.items()):
+                # Convert datetime objects
+                if isinstance(value, datetime.datetime):
+                    processed_data[key] = value
+                # Convert timestamp integers/floats to datetime
+                elif key.endswith('_at') and isinstance(value, (int, float)):
+                    processed_data[key] = datetime.datetime.fromtimestamp(value)
+                # Convert any dictionaries to JSON strings
+                elif isinstance(value, (dict, list)):
+                    processed_data[key] = json.dumps(value)
+                # Handle None values explicitly (already handled by psycopg2)
+                elif value is None:
+                    processed_data[key] = None
             
             with self.conn.cursor() as cur:
                 # Build the query
-                updates = [f"{key} = %s" for key in data.keys() if key != 'id']
-                values = [data[key] for key in data.keys() if key != 'id']
+                updates = [f"{key} = %s" for key in processed_data.keys() if key != 'id']
+                values = [processed_data[key] for key in processed_data.keys() if key != 'id']
                 values.append(id_value)  # For the WHERE clause
                 
                 sql = f"UPDATE {collection} SET {', '.join(updates)} WHERE id = %s"
