@@ -1,29 +1,53 @@
 """
-D10 Discord Bot - Main entry point
+D10 Discord Bot - Main entry point (Linux-compatible)
 """
 
 import os
+import sys
 import logging
 import asyncio
 import threading
+import signal
 from flask import Flask, jsonify, render_template_string
-from bot import D10Bot
 from dotenv import load_dotenv
+
+# Determine which bot class to import based on platform
+if sys.platform.startswith('win'):
+    from bot import D10Bot
+else:
+    # For Linux environments, use the Linux-optimized bot
+    from bot_linux import D10Bot
 
 # Load environment variables
 load_dotenv()
 
-# Configure logging
+# Configure logging with proper Linux paths
+log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+os.makedirs(log_dir, exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("bot.log"),
+        logging.FileHandler(os.path.join(log_dir, "bot.log")),
         logging.StreamHandler()
     ]
 )
 
 logger = logging.getLogger("d10-bot")
+
+# Setup signal handlers for graceful shutdown
+def signal_handler(sig, frame):
+    logger.info("Received shutdown signal, exiting gracefully...")
+    sys.exit(0)
+
+# Register signal handlers
+try:
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+except (AttributeError, ValueError):
+    # Some signals might not be available on all platforms
+    pass
 
 # Create Flask app
 app = Flask(__name__)
