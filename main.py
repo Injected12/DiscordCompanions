@@ -71,12 +71,12 @@ def index():
         <div class="container">
             <h1>D10 Discord Bot</h1>
             <p class="lead">A comprehensive Discord bot with moderation, tickets, roles, and more!</p>
-            
+
             <div class="status-card">
                 <h3>Bot Status</h3>
                 <p>Bot is <span class="status-badge status-online">ONLINE</span></p>
             </div>
-            
+
             <div class="feature-list">
                 <h3>Features</h3>
                 <ul>
@@ -115,14 +115,14 @@ def run_flask_app():
 def run_discord_bot():
     # Get the token from environment variables
     token = os.getenv("DISCORD_TOKEN")
-    
+
     if not token:
         logger.error("DISCORD_TOKEN environment variable not set")
         return
-    
+
     # Create and run bot
     bot = D10Bot()
-    
+
     try:
         asyncio.run(bot.start(token))
     except KeyboardInterrupt:
@@ -136,6 +136,6 @@ if __name__ == "__main__":
     bot_thread = threading.Thread(target=run_discord_bot)
     bot_thread.daemon = True
     bot_thread.start()
-    
+
     # Start the Flask app in the main thread
     run_flask_app()

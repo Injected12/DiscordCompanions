@@ -255,9 +255,10 @@ class SlotChannels(commands.Cog):
                 )
             )
             
-            # Mark as inactive
+            # Mark as inactive and remove from active slots
             slot_data["active"] = False
             self.bot.db.update("slot_channels", slot_data["id"], slot_data)
+            self.active_slots.pop(message.channel.id, None)
             
             # Send transcript to user
             user = message.author
