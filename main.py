@@ -108,7 +108,8 @@ def status():
 
 # Function to run the Flask app
 def run_flask_app():
-    app.run(host="0.0.0.0", port=5000)
+    # Use port 8080 when running directly through python
+    app.run(host="0.0.0.0", port=8080)
 
 # Function to run the Discord bot
 def run_discord_bot():
