@@ -1,0 +1,152 @@
+# Discord Bot Development Prompt
+
+Create a comprehensive Discord bot with the following specifications:
+
+## Core Architecture
+- Built using Python 3.8+ with discord.py library
+- PostgreSQL database integration
+- Modular command structure with separate files for different functionalities
+
+## Required Features
+
+### 1. Ticket System
+- Command: `/setupticket (#channel)`
+- Embed with title "This is D10 ticket system" and a picture (https://imgur.com/HuSzeAX)
+- Message under that says "Press "Create ticket"
+- Dropdown menu options after clicking create ticket:
+  - Partnership Ticket - quastions - Invite Link (250+ members)
+  - Support - quastions - Subject, Descrition
+  - Purchase - Product, payment method
+  - Staff Application - Have you ever been staff on a similar server? Why do you want to be staff? Do you agree to status/or bio with .gg/d10?
+  - Leaker Application - Preview of what you will leak, how do you leak?
+- Custom form questions per ticket type
+- Lets staff see the answers in the ticket in a embed
+- Staff approval system
+- Ticket transcripts
+- Commands: `/closeticket`, `/closealltickets`
+- Configurable image URL for embeds
+
+### 2. User Status Tracking
+- Monitor user status containing ".gg/d10"
+- Auto-role assignment based on status (role id : 1363311828142264492)
+- Role removal on status change
+
+### 3. Welcome System
+- Customizable welcome messages
+- /setupwelcome (#channel)
+- Member count tracking
+- Designated welcome channel
+- embed message with users name, profile picture and the text "discord.gg/d10"
+
+### 4. Role Management
+- `/giverole (user) (role)` command
+- Role hierarchy respect
+- Permission validation
+
+### 5. Slot Channels
+- `/createslot` command with parameters:
+  - User mention
+  - Duration (days)
+  - @everyone pings limit
+  - @here pings limit
+  - Category
+- Ping limit tracking
+- Ping notify in a embed after each ping.
+- when ping limit is extended the bot removes the slot channel
+- Bot sends dm to the user with a transcript witch can be used in a ticket to do /restore (username) and their slots gets created with exact same info again.
+- embed when slot is created (DO NOT PING ANYONE SO ALWAYS EMBED)
+- embed notify each ping a slot uses.
+- Auto-removal on limit breach
+- The channel the slot is made in is so EVERYONE only has read perms but the certain user can write there and ping
+- DM notifications
+
+### 6. Admin Commands
+- `/lockdown` and `/unlock`
+- `/clearserver` (role/channel management)
+- `/antiraid` protection
+- Basic moderation: `/ban`, `/kick`, `/mute`
+
+### 7. Voice Channel Management
+- `/setupvc (category)` command
+- Dynamic channel creation
+- creates a vc called jtc
+- when joining the bot creates a vc with that name and moves them to it, set perms so that user can change name on that vc.
+- User limit setting (`/count changes the count on how many can join that vc (IN DM)`)
+- Auto-cleanup
+
+### 8. Report/Praise System
+- `/report (user)` command
+- `/praise (user)
+- `/status (user)` for report history
+- Staff notification system
+
+
+/giveaway start (duration) (prize)
+
+Automatic winner draw
+
+
+### 9. Vouch system
+- `/vouch (user) (reason)
+- `sends out a embed in this channel id : 1363277606874779809 with the vouch and good info.
+vouches can only be done to users with this role id : 1363277493443756256
+
+
+
+
+
+
+## Technical Requirements
+
+### Database Schema
+- User tracking
+- Ticket records
+- Slot channel configurations
+- Report logging
+- Voice channel states
+- Server configurations
+
+### Web Dashboard
+- React-based frontend
+- Real-time updates
+- Role management interface
+- Ticket management
+- Configuration panels
+- Status tracking visualization
+
+### Security Features
+- Permission levels
+- Rate limiting
+- Audit logging
+- Anti-raid protection
+- Data validation
+
+### Error Handling
+- Comprehensive logging
+- Error recovery
+- User feedback
+- Database transaction safety
+
+
+## Development Guidelines
+1. Implement comprehensive error handling
+2. Use type hints in Python
+3. Follow Discord.py best practices
+4. Implement proper permission checks
+5. Use async/await patterns
+6. Document all commands and functions
+7. Include setup instructions
+8. Provide configuration examples
+
+
+
+## Environment Setup
+Required environment variables:
+- DISCORD_TOKEN (MTM2MzMxNDY3MDU4MDE0MjI4MQ.GgkHat.w5RwFvuEf4afj7R-urz-porynWe8Nligs9VVmc)
+- DISCORD_SERVER_ID (1358090413340102686)
+- DISCORD_STAFF_ROLE_ID (1363277490008621337)
+
+
+Create database and log everything so when bot restarts i dont have to redo anything..
+
+After everything is done, create a config where i can make allot of changes but also ONE bat file i can open so the but is running directly with all commands working, installing all depecises and so on
