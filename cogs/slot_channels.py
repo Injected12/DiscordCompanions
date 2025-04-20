@@ -78,7 +78,15 @@ class SlotChannels(commands.Cog):
                     # Check if expired
                     expires_at = slot_data.get("expires_at", 0)
                     
-                    if expires_at and now > expires_at:
+                    # Convert expires_at to timestamp if it's a datetime object
+                    if isinstance(expires_at, datetime.datetime):
+                        expires_at = expires_at.timestamp()
+                    
+                    # Skip if expires_at is not valid
+                    if not expires_at:
+                        continue
+                        
+                    if now > expires_at:
                         # Get channel
                         channel = self.bot.get_channel(channel_id)
                         

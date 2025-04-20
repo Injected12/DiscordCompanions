@@ -101,7 +101,7 @@ class Vouch(commands.Cog):
             "user_id": user.id,
             "voucher_id": interaction.user.id,
             "reason": reason,
-            "timestamp": now
+            "timestamp": datetime.datetime.fromtimestamp(now)
         })
         
         # Update cooldown
@@ -166,7 +166,15 @@ class Vouch(commands.Cog):
             reason = vouch.get("reason", "No reason provided")
             timestamp = vouch.get("timestamp", 0)
             
-            time_str = f"<t:{int(timestamp)}:R>" if timestamp else "Unknown time"
+            # Handle different timestamp formats
+            if isinstance(timestamp, datetime.datetime):
+                timestamp_value = int(timestamp.timestamp())
+            elif isinstance(timestamp, (int, float)):
+                timestamp_value = int(timestamp)
+            else:
+                timestamp_value = 0
+                
+            time_str = f"<t:{timestamp_value}:R>" if timestamp_value else "Unknown time"
             
             if isinstance(voucher, discord.Member):
                 name = f"From {voucher.display_name} {time_str}"
@@ -273,9 +281,17 @@ class Vouch(commands.Cog):
                 voucher_id = vouch.get("voucher_id")
                 timestamp = vouch.get("timestamp", 0)
                 
+                # Handle different timestamp formats
+                if isinstance(timestamp, datetime.datetime):
+                    timestamp_value = int(timestamp.timestamp())
+                elif isinstance(timestamp, (int, float)):
+                    timestamp_value = int(timestamp)
+                else:
+                    timestamp_value = 0
+                
                 user = interaction.guild.get_member(user_id) or f"Unknown ({user_id})"
                 voucher = interaction.guild.get_member(voucher_id) or f"Unknown ({voucher_id})"
-                time_str = f"<t:{int(timestamp)}:R>" if timestamp else "Unknown time"
+                time_str = f"<t:{timestamp_value}:R>" if timestamp_value else "Unknown time"
                 
                 if isinstance(user, discord.Member) and isinstance(voucher, discord.Member):
                     recent_activity.append(f"{voucher.display_name} → {user.display_name} {time_str}")
